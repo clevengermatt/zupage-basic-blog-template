@@ -182,32 +182,32 @@ class App extends Component {
             <div className="Body-Text">{this.renderParagraphs()}</div>
           </Container>
         </div>
-
-        {lightboxIsOpen && (
-          <Lightbox
-            imageCaption={images[lightboxIndex].caption}
-            mainSrc={images[lightboxIndex].url}
-            nextSrc={images[(lightboxIndex + 1) % images.length].url}
-            prevSrc={
-              images[(lightboxIndex + images.length - 1) % images.length].url
-            }
-            onCloseRequest={() => this.setState({ lightboxIsOpen: false })}
-            onMovePrevRequest={() =>
-              this.setState({
-                lightboxIndex:
-                  (lightboxIndex + images.length - 1) % images.length
-              })
-            }
-            onMoveNextRequest={() =>
-              this.setState({
-                lightboxIndex: (lightboxIndex + 1) % images.length
-              })
-            }
-          />
-        )}
       </div>
     );
   }
 }
+
+// {lightboxIsOpen && (
+//   <Lightbox
+//     imageCaption={images[lightboxIndex].caption}
+//     mainSrc={images[lightboxIndex].url}
+//     nextSrc={images[(lightboxIndex + 1) % images.length].url}
+//     prevSrc={
+//       images[(lightboxIndex + images.length - 1) % images.length].url
+//     }
+//     onCloseRequest={() => this.setState({ lightboxIsOpen: false })}
+//     onMovePrevRequest={() =>
+//       this.setState({
+//         lightboxIndex:
+//           (lightboxIndex + images.length - 1) % images.length
+//       })
+//     }
+//     onMoveNextRequest={() =>
+//       this.setState({
+//         lightboxIndex: (lightboxIndex + 1) % images.length
+//       })
+//     }
+//   />
+// )}
 
 export default App;
