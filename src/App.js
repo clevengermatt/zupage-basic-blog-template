@@ -9,6 +9,7 @@ class App extends Component {
   state = {
     author: {},
     colorPalette: [],
+    date: "",
     images: [],
     paragraphs: [],
     title: "",
@@ -18,9 +19,15 @@ class App extends Component {
 
   async componentDidMount() {
     const postResponse = await zupage.getCurrentPost();
+
+    const date = new Date(
+      postResponse.published_time * 1000
+    ).toLocaleDateString("en-US");
+
     this.setState({
       author: postResponse.creator,
       colorPalette: postResponse.page.color_palette,
+      date: date,
       images: postResponse.images,
       paragraphs: this.paragraphs(postResponse),
       title: postResponse.title
@@ -66,6 +73,15 @@ class App extends Component {
       <div className="Author">
         <Image className="Author-Image" src={author.profile_image_url} avatar />
         <span className="Author-Text">{author.name}</span>
+      </div>
+    );
+  };
+
+  renderDate = () => {
+    const { date } = this.state;
+    return (
+      <div className="Date">
+        <p>{date}</p>
       </div>
     );
   };
@@ -178,6 +194,7 @@ class App extends Component {
             <div className="Title-Text">
               <p>{title}</p>
               {this.renderAuthor()}
+              {this.renderDate()}
             </div>
             <div className="Body-Text">{this.renderParagraphs()}</div>
           </Container>
