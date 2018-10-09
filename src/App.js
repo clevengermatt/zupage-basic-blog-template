@@ -2,13 +2,13 @@ import React, { Component } from "react";
 import "./App.css";
 import zupage from "zupage";
 import { Container, Image } from "semantic-ui-react";
-import Lightbox from "react-image-lightbox";
-import "react-image-lightbox/style.css"; // This only needs to be imported once in your app
+import Lightbox from "react-images";
 
 class App extends Component {
   state = {
     author: {},
     colorPalette: [],
+    currentImage: 0,
     date: "",
     images: [],
     paragraphs: [],
@@ -28,11 +28,31 @@ class App extends Component {
       author: postResponse.creator,
       colorPalette: postResponse.page.color_palette,
       date: date,
-      images: postResponse.images,
+      images: this.formatImages(postResponse.images),
       paragraphs: this.paragraphs(postResponse),
       title: postResponse.title
     });
   }
+
+  formatImages = images => {
+    let photoArray = [];
+
+    let index = 0;
+
+    images.forEach(function(image) {
+      photoArray.push({
+        id: image.id,
+        index: index,
+        caption: image.caption,
+        src: image.url,
+        width: image.width,
+        height: image.height
+      });
+      index++;
+    });
+
+    return photoArray;
+  };
 
   paragraphs = post => {
     if (post.body) {
@@ -49,19 +69,14 @@ class App extends Component {
 
     let topImage = "";
     if (images.length > 0) {
-      topImage = images[0].url;
+      topImage = images[0].src;
     }
 
     return (
       <Image
         src={topImage}
         className="Title-Image"
-        onClick={() =>
-          this.setState({
-            lightboxIsOpen: true,
-            lightboxIndex: 0
-          })
-        }
+        onClick={() => this.openLightbox(null, 0)}
         centered
       />
     );
@@ -128,19 +143,13 @@ class App extends Component {
 
       if (imageIndex + 1 < images.length && i % spacing === 0) {
         imageIndex++;
-        const lightboxIndex = imageIndex;
         return (
           <p key={i}>
             <Image
               key={images[imageIndex].id}
-              src={images[imageIndex].url}
+              src={images[imageIndex].src}
               className="Inline-Image"
-              onClick={() =>
-                this.setState({
-                  lightboxIsOpen: true,
-                  lightboxIndex: lightboxIndex
-                })
-              }
+              onClick={() => this.openLightbox(images[imageIndex])}
               centered
             />
             {paragraph}
@@ -170,14 +179,34 @@ class App extends Component {
     });
   };
 
+  openLightbox = (event, obj) => {
+    this.setState({
+      currentImage: obj.index,
+      lightboxIsOpen: true
+    });
+  };
+
+  closeLightbox = () => {
+    this.setState({
+      currentImage: 0,
+      lightboxIsOpen: false
+    });
+  };
+
+  gotoPrevious = () => {
+    this.setState({
+      currentImage: this.state.currentImage - 1
+    });
+  };
+
+  gotoNext = () => {
+    this.setState({
+      currentImage: this.state.currentImage + 1
+    });
+  };
+
   render() {
-    const {
-      colorPalette,
-      images,
-      lightboxIndex,
-      lightboxIsOpen,
-      title
-    } = this.state;
+    const { colorPalette, images, title } = this.state;
 
     return (
       <div
@@ -198,33 +227,19 @@ class App extends Component {
             </div>
             <div className="Body-Text">{this.renderParagraphs()}</div>
           </Container>
+          <Lightbox
+            className="Lightbox"
+            images={images}
+            onClose={this.closeLightbox}
+            onClickPrev={this.gotoPrevious}
+            onClickNext={this.gotoNext}
+            currentImage={this.state.currentImage}
+            isOpen={this.state.lightboxIsOpen}
+          />
         </div>
       </div>
     );
   }
 }
-
-// {lightboxIsOpen && (
-//   <Lightbox
-//     imageCaption={images[lightboxIndex].caption}
-//     mainSrc={images[lightboxIndex].url}
-//     nextSrc={images[(lightboxIndex + 1) % images.length].url}
-//     prevSrc={
-//       images[(lightboxIndex + images.length - 1) % images.length].url
-//     }
-//     onCloseRequest={() => this.setState({ lightboxIsOpen: false })}
-//     onMovePrevRequest={() =>
-//       this.setState({
-//         lightboxIndex:
-//           (lightboxIndex + images.length - 1) % images.length
-//       })
-//     }
-//     onMoveNextRequest={() =>
-//       this.setState({
-//         lightboxIndex: (lightboxIndex + 1) % images.length
-//       })
-//     }
-//   />
-// )}
 
 export default App;
