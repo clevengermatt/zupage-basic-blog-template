@@ -2,21 +2,14 @@
   background-color: black;
 }
 
-.Sub-Image {
-  background-color: white;
-}
-
-.Author {
-  margin-top: -40px;
-}
-
 .Date {
   margin-top: -10px;
-  padding-left: 55px;
+  padding-left: 60px;
   font-size: 12px;
 }
 
 .Author-Text {
+  padding-left: 5px;
   font-size: 16px;
   font-weight: bold;
 }
@@ -27,15 +20,14 @@
 }
 
 .Body-Text {
-  padding: 25px 0px 200px 0px;
   font-size: 20px;
+  padding: 25px 0px 200px 0px;
 }
 
-.Title-Text {
-  padding-top: 25px;
-  padding-left: 25px;
-  padding-right: 25px;
-  font-size: 45px;
+@media (max-width: 623px) {
+  .Body-Text {
+    font-size: 16px;
+  }
 }
 
 .First-Character {
@@ -47,27 +39,11 @@
   padding-left: 3px;
 }
 
-.Lightbox {
-  position: absolute;
-  top: 50%;
-  margin-top: -100px;
-  height: 200px;
+.Sub-Image {
+  background-color: white;
 }
 
-.Title-Image {
-  max-height: 500px;
-  min-height: 200px;
-}
-
-.Inline-Image {
+.Title-Text {
   padding-top: 25px;
-  padding-bottom: 25px;
-  width: 100%;
-}
-
-@media (max-width: 623px) {
-  .Body-Text {
-    padding: 25px 0px 200px 0px;
-    font-size: 16px;
-  }
+  font-size: 45px;
 }

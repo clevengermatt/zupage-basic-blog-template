@@ -2,19 +2,17 @@ import React, { Component } from "react";
 import "./App.css";
 import zupage from "zupage";
 import { Container, Image } from "semantic-ui-react";
-import Lightbox from "react-images";
+import Linkify from "react-linkify";
 
 class App extends Component {
   state = {
-    author: {},
     colorPalette: [],
     currentImage: 0,
+    creator: {},
     date: "",
     images: [],
     paragraphs: [],
-    title: "",
-    lightboxIndex: 0,
-    lightboxIsOpen: false
+    title: ""
   };
 
   async componentDidMount() {
@@ -25,8 +23,8 @@ class App extends Component {
     ).toLocaleDateString("en-US");
 
     this.setState({
-      author: postResponse.creator,
       colorPalette: postResponse.page.color_palette,
+      creator: postResponse.creator,
       date: date,
       images: this.formatImages(postResponse.images),
       paragraphs: this.paragraphs(postResponse),
@@ -64,7 +62,7 @@ class App extends Component {
     return [];
   };
 
-  renderHeader = () => {
+  renderTopImage = () => {
     const { images } = this.state;
 
     let topImage = "";
@@ -72,14 +70,7 @@ class App extends Component {
       topImage = images[0].src;
     }
 
-    return (
-      <Image
-        src={topImage}
-        className="Title-Image"
-        onClick={() => this.openLightbox(null, 0)}
-        centered
-      />
-    );
+    return <Image src={topImage} className="Title-Image" centered />;
   };
 
   renderAuthor = () => {
@@ -149,7 +140,6 @@ class App extends Component {
               key={images[imageIndex].id}
               src={images[imageIndex].src}
               className="Inline-Image"
-              onClick={() => this.openLightbox(images[imageIndex])}
               centered
             />
             {paragraph}
@@ -163,46 +153,25 @@ class App extends Component {
 
   leftoverImages = images => {
     return images.map((image, i) => {
-      const lightboxIndex = i + 1;
-      return (
+      return <Image key={image.id} src={image.url} />;
+    });
+  };
+
+  renderHeader = () => {
+    const { creator, date } = this.state;
+    return (
+      <div className="Header">
         <Image
-          key={image.id}
-          src={image.url}
-          onClick={() =>
-            this.setState({
-              lightboxIsOpen: true,
-              lightboxIndex: lightboxIndex
-            })
-          }
+          className="Author-Image"
+          src={creator.profile_image_url}
+          avatar
         />
-      );
-    });
-  };
-
-  openLightbox = (event, obj) => {
-    this.setState({
-      currentImage: obj.index,
-      lightboxIsOpen: true
-    });
-  };
-
-  closeLightbox = () => {
-    this.setState({
-      currentImage: 0,
-      lightboxIsOpen: false
-    });
-  };
-
-  gotoPrevious = () => {
-    this.setState({
-      currentImage: this.state.currentImage - 1
-    });
-  };
-
-  gotoNext = () => {
-    this.setState({
-      currentImage: this.state.currentImage + 1
-    });
+        <span className="Author-Text">{creator.name}</span>
+        <div className="Date">
+          <p>{date}</p>
+        </div>
+      </div>
+    );
   };
 
   render() {
@@ -217,25 +186,15 @@ class App extends Component {
           })`
         }}
       >
-        {this.renderHeader()}
+        {this.renderTopImage()}
         <div className="Sub-Image">
           <Container text>
             <div className="Title-Text">
-              <p>{title}</p>
-              {this.renderAuthor()}
-              {this.renderDate()}
+              {title}
+              {this.renderHeader()}
             </div>
-            <div className="Body-Text">{this.renderParagraphs()}</div>
+            <Linkify className="Body-Text">{this.renderParagraphs()}</Linkify>
           </Container>
-          <Lightbox
-            className="Lightbox"
-            images={images}
-            onClose={this.closeLightbox}
-            onClickPrev={this.gotoPrevious}
-            onClickNext={this.gotoNext}
-            currentImage={this.state.currentImage}
-            isOpen={this.state.lightboxIsOpen}
-          />
         </div>
       </div>
     );
